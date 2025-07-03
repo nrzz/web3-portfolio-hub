@@ -1,0 +1,10 @@
+import React from 'react'
+
+export const Settings: React.FC = () => {
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-4">Settings</h1>
+      <p>Configure your account and preferences here.</p>
+    </div>
+  )
+} 

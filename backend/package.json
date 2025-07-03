@@ -1,0 +1,16 @@
+{
+  "name": "web3-portfolio-backend",
+  "version": "1.0.0",
+  "description": "Web3 Portfolio Dashboard Backend (Go)",
+  "main": "main.go",
+  "scripts": {
+    "start": "go run main.go",
+    "dev": "go run main.go",
+    "build": "go build -o bin/server main.go",
+    "test": "go test ./...",
+    "clean": "go clean",
+    "mod": "go mod tidy"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+} 

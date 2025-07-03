@@ -1,0 +1,126 @@
+services:
+  # PostgreSQL Database for Development
+  postgres:
+    image: postgres:15-alpine
+    container_name: web3-portfolio-postgres-dev
+    environment:
+      POSTGRES_DB: web3_portfolio_dev
+      POSTGRES_USER: dev_user
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev_user -d web3_portfolio_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - web3-network-dev
+    restart: unless-stopped
+
+  # Redis for Development
+  redis:
+    image: redis:7-alpine
+    container_name: web3-portfolio-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data_dev:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - web3-network-dev
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: web3-portfolio-backend-dev
+    environment:
+      DATABASE_URL: postgres://dev_user:dev_password@postgres:5432/web3_portfolio_dev?sslmode=disable
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: dev-jwt-secret-key-for-testing-only
+      LOG_LEVEL: debug
+      PORT: 8080
+      ENVIRONMENT: development
+      DEBUG: true
+      # Web3 API keys for testing (using public endpoints)
+      ETHEREUM_RPC_URL: https://eth-mainnet.g.alchemy.com/v2/demo
+      POLYGON_RPC_URL: https://polygon-rpc.com
+      BSC_RPC_URL: https://bsc-dataseed1.binance.org
+      COINGECKO_API_URL: https://api.coingecko.com/api/v3
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - web3-network-dev
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./backend:/app
+      - /app/vendor
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: web3-portfolio-frontend-dev
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://localhost:8080
+      VITE_APP_NAME: Web3 Portfolio Dashboard (Dev)
+      VITE_ENVIRONMENT: development
+    depends_on:
+      - backend
+    networks:
+      - web3-network-dev
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+  # pgAdmin for Database Management (Development Only)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: web3-portfolio-pgadmin-dev
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@web3portfolio.dev
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data_dev:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - web3-network-dev
+    restart: unless-stopped
+
+volumes:
+  postgres_data_dev:
+  redis_data_dev:
+  pgadmin_data_dev:
+
+networks:
+  web3-network-dev:
+    driver: bridge 
