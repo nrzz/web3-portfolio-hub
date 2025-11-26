@@ -1,84 +1,135 @@
-name: CI/CD
+name: CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main, master, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master, dev ]
 
 jobs:
-  test-backend:
+  # Go Backend
+  backend-test:
+    name: Test Go Backend
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+    
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: '1.21'
-    
-    - name: Install dependencies
-      run: |
-        cd backend
-        go mod download
-    
-    - name: Run tests
-      run: |
-        cd backend
-        go test -v ./...
-    
-    - name: Build
-      run: |
-        cd backend
-        go build -o main .
+      - uses: actions/checkout@v4
+      
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+          cache-dependency-path: backend/go.sum
+      
+      - name: Install dependencies
+        run: go mod download
+        working-directory: backend
+      
+      - name: Run tests
+        run: go test -v ./...
+        working-directory: backend
+        env:
+          DATABASE_URL: postgres://postgres:postgres@localhost:5432/testdb?sslmode=disable
+      
+      - name: Run linter (golangci-lint)
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          working-directory: backend
+      
+      - name: Build backend
+        run: go build -v -o web3-portfolio-backend ./main.go
+        working-directory: backend
 
-  test-frontend:
+  # React Frontend
+  frontend-test:
+    name: Test Frontend
     runs-on: ubuntu-latest
+    
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: frontend/package-lock.json
-    
-    - name: Install dependencies
-      run: |
-        cd frontend
-        npm ci
-    
-    - name: Run tests
-      run: |
-        cd frontend
-        npm test
-    
-    - name: Build
-      run: |
-        cd frontend
-        npm run build
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      
+      - name: Install dependencies
+        run: npm ci
+        working-directory: frontend
+      
+      - name: Run linter
+        run: npm run lint
+        working-directory: frontend
+        continue-on-error: true
+      
+      - name: Type check
+        run: npx tsc --noEmit
+        working-directory: frontend
+      
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: frontend/dist/
+          retention-days: 7
 
-  docker-build:
-    needs: [test-backend, test-frontend]
+  # Docker Compose Test
+  docker-test:
+    name: Docker Compose Test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Build and test with Docker Compose
+        run: |
+          docker-compose -f docker-compose.dev.yml build
+          docker-compose -f docker-compose.dev.yml up -d
+          sleep 30
+          docker-compose -f docker-compose.dev.yml ps
+          docker-compose -f docker-compose.dev.yml down
+
+  # Security Scan
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
     
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-    
-    - name: Build and push Backend
-      uses: docker/build-push-action@v4
-      with:
-        context: ./backend
-        push: false
-        tags: web3-portfolio-backend:latest
-    
-    - name: Build and push Frontend
-      uses: docker/build-push-action@v4
-      with:
-        context: ./frontend
-        push: false
-        tags: web3-portfolio-frontend:latest 
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      
+      - name: Upload Trivy results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
