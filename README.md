@@ -1,4 +1,8 @@
-# 🚀 Web3 Portfolio Dashboard & Community Forum
+# Web3 Portfolio Dashboard & Community Forum
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Go](https://img.shields.io/badge/Go-1.23+-00ADD8)](https://go.dev/)
+[![React](https://img.shields.io/badge/React-18-61DAFB)](https://react.dev/)
 
 A comprehensive **full-stack Web3 portfolio tracker** with an integrated **community forum** for cryptocurrency enthusiasts. Track your crypto portfolios across multiple blockchain networks while engaging with a Stack Overflow-style community.
 
