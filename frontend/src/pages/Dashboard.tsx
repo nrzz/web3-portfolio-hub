@@ -95,12 +95,20 @@ const recentTransactions = [
   { id: 4, type: 'transfer', asset: 'ETH', amount: '0.1', value: '$250', time: '2 hours ago', status: 'completed' },
 ]
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean
+  payload?: Array<{ color: string; name: string; value?: number }>
+  label?: string
+}) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-gray-900 text-white p-3 rounded-lg border border-gray-700">
         <p className="font-medium">{label}</p>
-        {payload.map((entry: any, index: number) => (
+        {payload.map((entry, index: number) => (
           <p key={index} style={{ color: entry.color }}>
             {entry.name}: ${entry.value?.toLocaleString()}
           </p>

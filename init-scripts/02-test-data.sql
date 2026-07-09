@@ -19,7 +19,7 @@ ON CONFLICT (id) DO NOTHING;
 -- Insert test tokens
 INSERT INTO tokens (id, symbol, name, network, contract_address, decimals, logo_url, price_usd, market_cap, volume_24h, created_at, updated_at) VALUES
 ('770e8400-e29b-41d4-a716-446655440001', 'ETH', 'Ethereum', 'ethereum', '0x0000000000000000000000000000000000000000', 18, 'https://assets.coingecko.com/coins/images/279/large/ethereum.png', 2500.00, 300000000000, 15000000000, NOW(), NOW()),
-('770e8400-e29b-41d4-a716-446655440002', 'USDC', 'USD Coin', 'ethereum', '0xA0b86a33E6441b8C4C8C8C8C8C8C8C8C8C8C8C8', 6, 'https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png', 1.00, 25000000000, 5000000000, NOW(), NOW()),
+('770e8400-e29b-41d4-a716-446655440002', 'USDC', 'USD Coin', 'ethereum', '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', 6, 'https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png', 1.00, 25000000000, 5000000000, NOW(), NOW()),
 ('770e8400-e29b-41d4-a716-446655440003', 'MATIC', 'Polygon', 'polygon', '0x0000000000000000000000000000000000001010', 18, 'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png', 0.85, 8000000000, 300000000, NOW(), NOW()),
 ('770e8400-e29b-41d4-a716-446655440004', 'BNB', 'BNB', 'bsc', '0x0000000000000000000000000000000000000000', 18, 'https://assets.coingecko.com/coins/images/825/large/bnb-icon2_2x.png', 320.00, 50000000000, 2000000000, NOW(), NOW()),
 ('770e8400-e29b-41d4-a716-446655440005', 'LINK', 'Chainlink', 'ethereum', '0x514910771AF9Ca656af840dff83E8264EcF986CA', 18, 'https://assets.coingecko.com/coins/images/877/large/chainlink.png', 15.50, 9000000000, 800000000, NOW(), NOW())

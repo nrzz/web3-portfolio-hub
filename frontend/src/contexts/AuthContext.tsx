@@ -30,23 +30,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user is logged in on app start
-    const token = localStorage.getItem('token')
-    if (token) {
-      // Validate token and get user info
-      // For now, we'll just set a mock user
-      setUser({
-        id: '1',
-        email: 'user@example.com',
-        is_active: true,
-        plan: 'free',
-        subscription_tier: 'basic',
-        subscription_status: 'active',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
+    const validateSession = async () => {
+      const token = localStorage.getItem('token')
+      if (!token) {
+        setIsLoading(false)
+        return
+      }
+
+      try {
+        const response = await fetch('/api/v1/user/profile', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+
+        if (!response.ok) {
+          localStorage.removeItem('token')
+          setUser(null)
+          return
+        }
+
+        const data = await response.json()
+        setUser(data.user)
+      } catch (error) {
+        console.error('Session validation error:', error)
+        localStorage.removeItem('token')
+        setUser(null)
+      } finally {
+        setIsLoading(false)
+      }
     }
-    setIsLoading(false)
+
+    validateSession()
   }, [])
 
   const login = async (email: string, password: string) => {

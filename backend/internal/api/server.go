@@ -56,7 +56,7 @@ func NewServer(
 
 func (s *Server) registerRoutes() {
 	// Add middleware
-	s.engine.Use(corsMiddleware())
+	s.engine.Use(corsMiddleware(s.config.CorsAllowedOrigins))
 	s.engine.Use(loggerMiddleware(s.logger))
 	s.engine.Use(rateLimitMiddleware())
 	s.engine.Use(requestIDMiddleware())
@@ -65,6 +65,7 @@ func (s *Server) registerRoutes() {
 	s.engine.Use(recoveryMiddleware(s.logger))
 
 	// Public routes
+	s.engine.GET("/health", s.healthHandler)
 	s.engine.GET("/api/health", s.healthHandler)
 	s.engine.GET("/api/version", s.versionHandler)
 

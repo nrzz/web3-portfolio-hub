@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+interface ForumQuestionDetail {
+  title?: string;
+  body?: string;
+  author?: string;
+  user_id?: string;
+  createdAt?: string;
+  created_at?: string;
+  tags?: Array<string | { id?: string; name?: string }>;
+}
+
 export const QuestionDetail: React.FC = () => {
   const { id } = useParams();
-  const [question, setQuestion] = useState<any>(null);
+  const [question, setQuestion] = useState<ForumQuestionDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -18,8 +28,8 @@ export const QuestionDetail: React.FC = () => {
         if (!res.ok) throw new Error('Failed to fetch question');
         const data = await res.json();
         setQuestion(data.question);
-      } catch (err: any) {
-        setError(err.message || 'Unknown error');
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
       }
@@ -41,8 +51,8 @@ export const QuestionDetail: React.FC = () => {
           <div className="mb-4">
             {question.tags && question.tags.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {question.tags.map((tag: any) => (
-                  <span key={tag.id || tag} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">{tag.name || tag}</span>
+                {question.tags.map((tag) => (
+                  <span key={typeof tag === 'string' ? tag : tag.id || tag.name} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">{typeof tag === 'string' ? tag : tag.name}</span>
                 ))}
               </div>
             )}

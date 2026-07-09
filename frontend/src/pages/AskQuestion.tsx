@@ -29,8 +29,8 @@ export const AskQuestion: React.FC = () => {
       setTitle('');
       setBody('');
       setTags('');
-    } catch (err: any) {
-      setError(err.message || 'Unknown error');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
     }
   };
 

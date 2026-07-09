@@ -55,7 +55,7 @@ type TransactionInfo struct {
 var tokenDecimals = map[string]uint8{
 	// Ethereum
 	"0xdAC17F958D2ee523a2206206994597C13D831ec7": 6,  // USDT
-	"0xA0b86a33E6441b8C4C8C8C8C8C8C8C8C8C8C8C8C": 6,  // USDC (demo address)
+	"0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48": 6,  // USDC
 	"0x6B175474E89094C44Da98b954EedeAC495271d0F": 18, // DAI
 	"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2": 18, // WETH
 	// Polygon
@@ -255,7 +255,7 @@ func (s *Web3Service) GetTokenBalances(address, network string) ([]TokenBalance,
 	}{
 		"ethereum": {
 			{"0xdAC17F958D2ee523a2206206994597C13D831ec7", "USDT", "Tether USD"},
-			{"0xA0b86a33E6441b8C4C8C8C8C8C8C8C8C8C8C8C8C", "USDC", "USD Coin"},
+			{"0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48", "USDC", "USD Coin"},
 			{"0x6B175474E89094C44Da98b954EedeAC495271d0F", "DAI", "Dai Stablecoin"},
 			{"0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2", "WETH", "Wrapped Ether"},
 		},

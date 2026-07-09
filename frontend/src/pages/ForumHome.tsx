@@ -1,8 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+interface ForumQuestion {
+  id?: string;
+  title?: string;
+  author?: string;
+  user_id?: string;
+  createdAt?: string;
+  created_at?: string;
+}
+
 export const ForumHome: React.FC = () => {
-  const [questions, setQuestions] = useState<any[]>([]);
+  const [questions, setQuestions] = useState<ForumQuestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,8 +26,8 @@ export const ForumHome: React.FC = () => {
         if (!res.ok) throw new Error('Failed to fetch questions');
         const data = await res.json();
         setQuestions(data.questions || []);
-      } catch (err: any) {
-        setError(err.message || 'Unknown error');
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
       }
@@ -40,7 +49,7 @@ export const ForumHome: React.FC = () => {
         <div className="bg-white shadow rounded-lg divide-y">
           {questions.length === 0 ? (
             <div className="px-6 py-4 text-gray-500">No questions yet.</div>
-          ) : questions.map((q: any) => (
+          ) : questions.map((q) => (
             <Link to={`/forum/${q.id}`} key={q.id} className="block px-6 py-4 hover:bg-gray-50 transition">
               <div className="font-semibold text-lg">{q.title}</div>
               <div className="text-sm text-gray-500">By {q.author || q.user_id} on {q.createdAt || q.created_at}</div>
