@@ -62,6 +62,12 @@ func New(databaseURL string) (*gorm.DB, error) {
 func Migrate(db *gorm.DB) error {
 	log.Println("Running database migrations...")
 
+	if db.Dialector.Name() == "postgres" {
+		if err := db.Exec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`).Error; err != nil {
+			return fmt.Errorf("failed to enable uuid-ossp extension: %w", err)
+		}
+	}
+
 	// Migrate all models at once
 	if err := db.AutoMigrate(
 		&models.User{},
