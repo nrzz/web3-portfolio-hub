@@ -111,13 +111,13 @@ jobs:
       
       - name: Build and test with Docker Compose
         run: |
-          docker-compose -f docker-compose.dev.yml build
-          docker-compose -f docker-compose.dev.yml up -d
+          docker compose -f docker-compose.dev.yml build
+          docker compose -f docker-compose.dev.yml up -d
           sleep 30
-          docker-compose -f docker-compose.dev.yml ps
+          docker compose -f docker-compose.dev.yml ps
           curl -f http://localhost:8080/health
           curl -f http://localhost:8080/api/health
-          docker-compose -f docker-compose.dev.yml down
+          docker compose -f docker-compose.dev.yml down
 
   # Security Scan
   security-scan:
