@@ -314,7 +314,9 @@ func (s *AuthService) generateToken(userID, email string) (string, error) {
 // generateResetToken creates a random reset token
 func generateResetToken() string {
 	bytes := make([]byte, 32)
-	rand.Read(bytes)
+	if _, err := rand.Read(bytes); err != nil {
+		return ""
+	}
 	return hex.EncodeToString(bytes)
 }
 

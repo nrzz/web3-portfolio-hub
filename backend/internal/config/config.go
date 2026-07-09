@@ -32,10 +32,10 @@ type Config struct {
 }
 
 func Load() *Config {
-	// Load environment files in order of priority
-	godotenv.Load(".env")
-	godotenv.Load("env.dev")
-	godotenv.Load("env.production")
+	// Load environment files in order of priority (optional files are ignored)
+	_ = godotenv.Load(".env")
+	_ = godotenv.Load("env.dev")
+	_ = godotenv.Load("env.production")
 
 	return &Config{
 		DatabaseURL:        getEnv("DATABASE_URL", "postgres://postgres:password@localhost:5432/web3_portfolio"),

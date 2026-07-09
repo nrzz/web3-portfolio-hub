@@ -12,14 +12,12 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	"gorm.io/gorm"
 
 	"web3-portfolio-dashboard/backend/internal/config"
 )
 
 type Web3Service struct {
 	clients map[string]*ethclient.Client
-	db      *gorm.DB
 	config  *config.Config
 }
 
