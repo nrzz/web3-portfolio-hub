@@ -1,0 +1,8 @@
+# CI-only compose override: skip init scripts that reference legacy schema tables.
+services:
+  postgres:
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
