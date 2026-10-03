@@ -149,10 +149,10 @@ POST /api/v1/forum/questions      # returns stub message
 
 ```bash
 # Backend
-cd backend && go test ./...
+(cd backend && go test ./...)
 
 # Frontend
-cd frontend && npm run test -- --run
+(cd frontend && npm run test -- --run)
 
 # Health check
 curl http://localhost:8080/health
