@@ -119,7 +119,7 @@ After PostgreSQL is installed and running:
 
 1. **Go to your project directory:**
    ```powershell
-   cd D:\Projects\web3-portfolio-dashboard
+   cd path\to\web3-portfolio-hub
    ```
 
 2. **Run the setup script:**
