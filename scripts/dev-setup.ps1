@@ -8,6 +8,7 @@ if (-not (Test-Path "backend\main.go")) {
     Write-Host "❌ Error: Please run this script from the project root directory" -ForegroundColor Red
     exit 1
 }
+$ProjectRoot = (Get-Location).Path
 
 # Step 1: Check if backend is already running and kill it
 Write-Host "📋 Checking for existing backend processes..." -ForegroundColor Yellow
@@ -65,7 +66,7 @@ if ($LASTEXITCODE -ne 0) {
 
 # Step 7: Start backend in background
 Write-Host "🚀 Starting backend server..." -ForegroundColor Green
-Start-Process -FilePath "go" -ArgumentList "run", "main.go" -WorkingDirectory "D:\Projects\web3-portfolio-dashboard\backend" -WindowStyle Hidden
+Start-Process -FilePath "go" -ArgumentList "run", "main.go" -WorkingDirectory (Join-Path $ProjectRoot "backend") -WindowStyle Hidden
 
 # Step 8: Wait for backend to start
 Write-Host "⏳ Waiting for backend to start..." -ForegroundColor Yellow
@@ -84,7 +85,7 @@ try {
 # Step 10: Start frontend
 Write-Host "🚀 Starting frontend server..." -ForegroundColor Green
 Set-Location ..\frontend
-Start-Process -FilePath "npm" -ArgumentList "run", "dev" -WorkingDirectory "D:\Projects\web3-portfolio-dashboard\frontend" -WindowStyle Hidden
+Start-Process -FilePath "npm" -ArgumentList "run", "dev" -WorkingDirectory (Join-Path $ProjectRoot "frontend") -WindowStyle Hidden
 
 # Step 11: Wait for frontend to start
 Write-Host "⏳ Waiting for frontend to start..." -ForegroundColor Yellow
