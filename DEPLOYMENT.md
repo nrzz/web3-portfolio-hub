@@ -14,8 +14,8 @@ This guide covers how to deploy the Web3 Portfolio Dashboard for both developmen
 
 1. **Clone the repository:**
    ```bash
-   git clone <repository-url>
-   cd web3-portfolio-dashboard
+   git clone https://github.com/nrzz/web3-portfolio-hub.git
+   cd web3-portfolio-hub
    ```
 
 2. **Start development environment:**
